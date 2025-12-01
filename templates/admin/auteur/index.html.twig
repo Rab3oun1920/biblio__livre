@@ -1,0 +1,94 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des auteurs{% endblock %}
+
+{% block page_title %}Gestion des auteurs{% endblock %}
+
+{% block toolbar %}
+    <a href="{{ path('admin_auteur_new') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nouvel auteur
+    </a>
+{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-body">
+        {% if auteurs is empty %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Aucun auteur enregistré pour le moment.
+            </div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Nationalité</th>
+                            <th>Date de naissance</th>
+                            <th>Nombre de livres</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for auteur in auteurs %}
+                            <tr>
+                                <td>{{ auteur.id }}</td>
+                                <td>{{ auteur.nom }}</td>
+                                <td>{{ auteur.prenom }}</td>
+                                <td>{{ auteur.nationalite ?? '-' }}</td>
+                                <td>{{ auteur.dateNaissance ? auteur.dateNaissance|date('d/m/Y') : '-' }}</td>
+                                <td>{{ auteur.livres|length }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ path('admin_auteur_show', {'id': auteur.id}) }}" 
+                                           class="btn btn-info" title="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ path('admin_auteur_edit', {'id': auteur.id}) }}" 
+                                           class="btn btn-warning" title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-danger" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#deleteModal{{ auteur.id }}"
+                                                title="Supprimer">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Modal de confirmation -->
+                                    <div class="modal fade" id="deleteModal{{ auteur.id }}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Confirmer la suppression</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Êtes-vous sûr de vouloir supprimer l'auteur "{{ auteur }}" ?
+                                                    {% if auteur.livres|length > 0 %}
+                                                        <br><strong class="text-danger">Attention : cet auteur a {{ auteur.livres|length }} livre(s) associé(s).</strong>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                    <form method="post" action="{{ path('admin_auteur_delete', {'id': auteur.id}) }}" style="display: inline;">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ auteur.id) }}">
+                                                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

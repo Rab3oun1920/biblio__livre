@@ -1,0 +1,68 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ livre.titre }}{% endblock %}
+
+{% block page_title %}Détails du livre{% endblock %}
+
+{% block toolbar %}
+    <a href="{{ path('admin_livre_index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+    <a href="{{ path('admin_livre_edit', {'id': livre.id}) }}" class="btn btn-warning">
+        <i class="bi bi-pencil"></i> Modifier
+    </a>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ livre.titre }}</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th width="30%">ID</th>
+                            <td>{{ livre.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Titre</th>
+                            <td>{{ livre.titre }}</td>
+                        </tr>
+                        <tr>
+                            <th>Auteur</th>
+                            <td>
+                                <a href="{{ path('admin_auteur_show', {'id': livre.auteur.id}) }}">
+                                    {{ livre.auteur }}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ISBN</th>
+                            <td>{{ livre.isbn ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Genre</th>
+                            <td>{{ livre.genre ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Année de publication</th>
+                            <td>{{ livre.anneePublication ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nombre de pages</th>
+                            <td>{{ livre.nombrePages ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Description</th>
+                            <td>{{ livre.description ?? '-' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

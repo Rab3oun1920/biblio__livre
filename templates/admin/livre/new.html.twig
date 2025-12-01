@@ -1,0 +1,76 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Ajouter un livre{% endblock %}
+
+{% block page_title %}Ajouter un nouveau livre{% endblock %}
+
+{% block toolbar %}
+    <a href="{{ path('admin_livre_index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                {{ form_start(form) }}
+                    <div class="mb-3">
+                        {{ form_label(form.titre) }}
+                        {{ form_widget(form.titre) }}
+                        {{ form_errors(form.titre) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.auteur) }}
+                        {{ form_widget(form.auteur) }}
+                        {{ form_errors(form.auteur) }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.isbn) }}
+                            {{ form_widget(form.isbn) }}
+                            {{ form_errors(form.isbn) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.genre) }}
+                            {{ form_widget(form.genre) }}
+                            {{ form_errors(form.genre) }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.anneePublication) }}
+                            {{ form_widget(form.anneePublication) }}
+                            {{ form_errors(form.anneePublication) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.nombrePages) }}
+                            {{ form_widget(form.nombrePages) }}
+                            {{ form_errors(form.nombrePages) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(form.description) }}
+                        {{ form_widget(form.description) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ path('admin_livre_index') }}" class="btn btn-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Enregistrer
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

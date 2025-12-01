@@ -1,0 +1,58 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Modifier un auteur{% endblock %}
+
+{% block page_title %}Modifier l'auteur : {{ auteur }}{% endblock %}
+
+{% block toolbar %}
+    <a href="{{ path('admin_auteur_index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                {{ form_start(form) }}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.nom) }}
+                            {{ form_widget(form.nom) }}
+                            {{ form_errors(form.nom) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.prenom) }}
+                            {{ form_widget(form.prenom) }}
+                            {{ form_errors(form.prenom) }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.nationalite) }}
+                            {{ form_widget(form.nationalite) }}
+                            {{ form_errors(form.nationalite) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.dateNaissance) }}
+                            {{ form_widget(form.dateNaissance) }}
+                            {{ form_errors(form.dateNaissance) }}
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ path('admin_auteur_index') }}" class="btn btn-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Enregistrer les modifications
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

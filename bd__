@@ -1,0 +1,11 @@
+# 1. Créer les tables (comme la base existe déjà)
+php bin/console doctrine:schema:update --force
+
+# 2. Vérifier les routes
+php bin/console debug:router
+
+# 3. Créer l'utilisateur admin
+php bin/console app:create-admin
+
+# 4. Lancer le serveur
+php -S localhost:8000 -t public/

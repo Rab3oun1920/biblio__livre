@@ -1,0 +1,57 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ user.prenom }} {{ user.nom }}{% endblock %}
+
+{% block page_title %}Détails de l'utilisateur{% endblock %}
+
+{% block toolbar %}
+    <a href="{{ path('admin_user_index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+    <a href="{{ path('admin_user_edit', {'id': user.id}) }}" class="btn btn-warning">
+        <i class="bi bi-pencil"></i> Modifier
+    </a>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ user.prenom }} {{ user.nom }}</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th width="30%">ID</th>
+                            <td>{{ user.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>{{ user.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nom</th>
+                            <td>{{ user.nom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Prénom</th>
+                            <td>{{ user.prenom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Rôles</th>
+                            <td>
+                                {% if 'ROLE_ADMIN' in user.roles %}
+                                    <span class="badge bg-danger">Administrateur</span>
+                                {% endif %}
+                                <span class="badge bg-secondary">Utilisateur</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
