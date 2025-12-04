@@ -1,0 +1,106 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des réclamations{% endblock %}
+
+{% block page_title %}Gestion des réclamations{% endblock %}
+
+{% block toolbar %}
+    <div class="btn-group">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="bi bi-filter"></i> Filtrer par statut
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ path('admin_reclamation_index') }}">Toutes</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ path('admin_reclamation_index') }}?statut=en_attente">En attente</a></li>
+            <li><a class="dropdown-item" href="{{ path('admin_reclamation_index') }}?statut=en_cours">En cours</a></li>
+            <li><a class="dropdown-item" href="{{ path('admin_reclamation_index') }}?statut=resolue">Résolues</a></li>
+            <li><a class="dropdown-item" href="{{ path('admin_reclamation_index') }}?statut=fermee">Fermées</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            {% if reclamations is empty %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Aucune réclamation pour le moment.
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Utilisateur</th>
+                            <th>Sujet</th>
+                            <th>Statut</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for reclamation in reclamations %}
+                            <tr>
+                                <td>{{ reclamation.id }}</td>
+                                <td>
+                                    {{ reclamation.user.prenom }} {{ reclamation.user.nom }}
+                                    <br><small class="text-muted">{{ reclamation.user.email }}</small>
+                                </td>
+                                <td>
+                                    <strong>{{ reclamation.sujet }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        {{ reclamation.message|length > 50 ? reclamation.message|slice(0, 50) ~ '...' : reclamation.message }}
+                                    </small>
+                                </td>
+                                <td>
+                                    {% if reclamation.statut == 'en_attente' %}
+                                        <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-clock"></i> En attente
+                                    </span>
+                                    {% elseif reclamation.statut == 'en_cours' %}
+                                        <span class="badge bg-info">
+                                        <i class="bi bi-arrow-repeat"></i> En cours
+                                    </span>
+                                    {% elseif reclamation.statut == 'resolue' %}
+                                        <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Résolue
+                                    </span>
+                                    {% elseif reclamation.statut == 'fermee' %}
+                                        <span class="badge bg-secondary">
+                                        <i class="bi bi-x-circle"></i> Fermée
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small>{{ reclamation.dateCreation|date('d/m/Y H:i') }}</small>
+                                    {% if reclamation.dateReponse %}
+                                        <br>
+                                        <small class="text-success">
+                                            Réponse: {{ reclamation.dateReponse|date('d/m/Y') }}
+                                        </small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ path('admin_reclamation_show', {'id': reclamation.id}) }}"
+                                           class="btn btn-info" title="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ path('admin_reclamation_repondre', {'id': reclamation.id}) }}"
+                                           class="btn btn-warning" title="Répondre">
+                                            <i class="bi bi-reply"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

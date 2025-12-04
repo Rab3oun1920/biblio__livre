@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - BookCollection{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h3><i class="bi bi-person-plus"></i> Créer un compte</h3>
+            </div>
+            <div class="card-body">
+                {{ form_start(registrationForm) }}
+                
+                <div class="mb-3">
+                    {{ form_label(registrationForm.email) }}
+                    {{ form_widget(registrationForm.email) }}
+                    {{ form_errors(registrationForm.email) }}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(registrationForm.nom) }}
+                        {{ form_widget(registrationForm.nom) }}
+                        {{ form_errors(registrationForm.nom) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(registrationForm.prenom) }}
+                        {{ form_widget(registrationForm.prenom) }}
+                        {{ form_errors(registrationForm.prenom) }}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    {{ form_label(registrationForm.telephone) }}
+                    {{ form_widget(registrationForm.telephone) }}
+                    {{ form_errors(registrationForm.telephone) }}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form_label(registrationForm.adresse) }}
+                    {{ form_widget(registrationForm.adresse) }}
+                    {{ form_errors(registrationForm.adresse) }}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form_label(registrationForm.plainPassword.first) }}
+                    {{ form_widget(registrationForm.plainPassword.first) }}
+                    {{ form_errors(registrationForm.plainPassword.first) }}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form_label(registrationForm.plainPassword.second) }}
+                    {{ form_widget(registrationForm.plainPassword.second) }}
+                    {{ form_errors(registrationForm.plainPassword.second) }}
+                </div>
+                
+                <div class="mb-3">
+                    <div class="form-check">
+                        {{ form_widget(registrationForm.agreeTerms) }}
+                        {{ form_label(registrationForm.agreeTerms) }}
+                    </div>
+                    {{ form_errors(registrationForm.agreeTerms) }}
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-check-circle"></i> S'inscrire
+                    </button>
+                </div>
+                
+                {{ form_end(registrationForm) }}
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-0">Vous avez déjà un compte ? 
+                    <a href="{{ path('app_login') }}">Connectez-vous</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

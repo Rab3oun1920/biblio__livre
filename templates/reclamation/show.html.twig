@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réclamation #{{ reclamation.id }} - BookCollection{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header d-flex justify-content-between align-items-center
+                {% if reclamation.statut == 'resolue' %}bg-success text-white
+                {% elseif reclamation.statut == 'en_cours' %}bg-info text-white
+                {% elseif reclamation.statut == 'fermee' %}bg-secondary text-white
+                {% else %}bg-warning text-dark{% endif %}">
+                    <div>
+                        <h3 class="mb-0">
+                            <i class="bi bi-chat-left-text"></i> Réclamation #{{ reclamation.id }}
+                        </h3>
+                        <small>{{ reclamation.sujet }}</small>
+                    </div>
+                    <div>
+                        {% if reclamation.statut == 'en_attente' %}
+                            <span class="badge bg-warning text-dark">
+                            <i class="bi bi-clock"></i> En attente
+                        </span>
+                        {% elseif reclamation.statut == 'en_cours' %}
+                            <span class="badge bg-info">
+                            <i class="bi bi-arrow-repeat"></i> En cours
+                        </span>
+                        {% elseif reclamation.statut == 'resolue' %}
+                            <span class="badge bg-success">
+                            <i class="bi bi-check-circle"></i> Résolue
+                        </span>
+                        {% elseif reclamation.statut == 'fermee' %}
+                            <span class="badge bg-secondary">
+                            <i class="bi bi-x-circle"></i> Fermée
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <!-- Informations de la réclamation -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informations</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong><i class="bi bi-calendar"></i> Date de création :</strong>
+                                        {{ reclamation.dateCreation|date('d/m/Y à H:i') }}</p>
+                                    {% if reclamation.dateReponse %}
+                                        <p><strong><i class="bi bi-calendar-check"></i> Date de réponse :</strong>
+                                            {{ reclamation.dateReponse|date('d/m/Y à H:i') }}</p>
+                                    {% endif %}
+                                    <p><strong><i class="bi bi-person"></i> Créée par :</strong>
+                                        {{ reclamation.user.nom }} {{ reclamation.user.prenom }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="bi bi-gear"></i> Actions</h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    {% if reclamation.statut == 'en_attente' %}
+                                        <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}" class="btn btn-warning mb-2">
+                                            <i class="bi bi-pencil"></i> Modifier
+                                        </a>
+                                        <form method="post" action="{{ path('app_reclamation_delete', {'id': reclamation.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="bi bi-trash"></i> Supprimer
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                    <a href="{{ path('app_mes_reclamations') }}" class="btn btn-secondary mt-2">
+                                        <i class="bi bi-arrow-left"></i> Retour à la liste
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Message de la réclamation -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-chat-left-text"></i> Votre message</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light">
+                                <p class="mb-0">{{ reclamation.message|nl2br }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Réponse de l'admin -->
+                    {% if reclamation.reponseAdmin %}
+                        <div class="card mb-4 border-success">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0"><i class="bi bi-reply-fill"></i> Réponse du support</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-success">
+                                    <p class="mb-0">{{ reclamation.reponseAdmin|nl2br }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            Notre équipe n'a pas encore répondu à votre réclamation.
+                            Vous recevrez une notification dès que nous aurons traité votre demande.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

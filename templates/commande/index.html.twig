@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Commandes - BookCollection{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="mb-4"><i class="bi bi-box-seam"></i> Mes Commandes</h1>
+
+        {% if commandes is empty %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Vous n'avez pas encore passé de commande.
+                <a href="{{ path('app_catalogue') }}" class="alert-link">Découvrir le catalogue</a>
+            </div>
+        {% else %}
+            <div class="row">
+                {% for commande in commandes %}
+                    <div class="col-md-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-0">Commande #{{ commande.id }}</h5>
+                                    <small class="text-muted">Passée le {{ commande.dateCommande|date('d/m/Y à H:i') }}</small>
+                                </div>
+                                <div>
+                                    {% if commande.statut == 'en_attente' %}
+                                        <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-clock"></i> En attente
+                                    </span>
+                                    {% elseif commande.statut == 'validee' %}
+                                        <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Validée
+                                    </span>
+                                    {% elseif commande.statut == 'expediee' %}
+                                        <span class="badge bg-info">
+                                        <i class="bi bi-truck"></i> Expédiée
+                                    </span>
+                                    {% elseif commande.statut == 'livree' %}
+                                        <span class="badge bg-primary">
+                                        <i class="bi bi-house-check"></i> Livrée
+                                    </span>
+                                    {% elseif commande.statut == 'annulee' %}
+                                        <span class="badge bg-danger">
+                                        <i class="bi bi-x-circle"></i> Annulée
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h6>Articles :</h6>
+                                        <ul class="list-unstyled">
+                                            {% for ligne in commande.ligneCommandes %}
+                                                <li class="mb-2">
+                                                    <i class="bi bi-book"></i>
+                                                    {{ ligne.livre.titre }}
+                                                    <small class="text-muted">
+                                                        ({{ ligne.quantite }} x {{ ligne.prixUnitaire|number_format(2, ',', ' ') }} TND)
+                                                    </small>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <h5>Total : {{ commande.montantTotal|number_format(2, ',', ' ') }} TND</h5>
+                                        <a href="{{ path('app_commande_show', {'id': commande.id}) }}" class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-eye"></i> Voir détails
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

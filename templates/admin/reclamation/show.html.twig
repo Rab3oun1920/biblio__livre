@@ -1,0 +1,105 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Détails de la réclamation{% endblock %}
+
+{% block page_title %}Réclamation #{{ reclamation.id }}{% endblock %}
+
+{% block toolbar %}
+    <a href="{{ path('admin_reclamation_index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+    <a href="{{ path('admin_reclamation_repondre', {'id': reclamation.id}) }}" class="btn btn-warning">
+        <i class="bi bi-reply"></i> Répondre
+    </a>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center
+                {% if reclamation.statut == 'resolue' %}bg-success text-white
+                {% elseif reclamation.statut == 'en_cours' %}bg-info text-white
+                {% elseif reclamation.statut == 'fermee' %}bg-secondary text-white
+                {% else %}bg-warning text-dark{% endif %}">
+                    <div>
+                        <h5 class="mb-0">{{ reclamation.sujet }}</h5>
+                        <small>Réclamation #{{ reclamation.id }}</small>
+                    </div>
+                    <div>
+                        <form method="post" action="{{ path('admin_reclamation_changer_statut', {'id': reclamation.id}) }}" class="d-inline">
+                            <select name="statut" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="en_attente" {% if reclamation.statut == 'en_attente' %}selected{% endif %}>En attente</option>
+                                <option value="en_cours" {% if reclamation.statut == 'en_cours' %}selected{% endif %}>En cours</option>
+                                <option value="resolue" {% if reclamation.statut == 'resolue' %}selected{% endif %}>Résolue</option>
+                                <option value="fermee" {% if reclamation.statut == 'fermee' %}selected{% endif %}>Fermée</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <!-- Informations -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0"><i class="bi bi-info-circle"></i> Informations</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong><i class="bi bi-person"></i> Utilisateur :</strong>
+                                        {{ reclamation.user.prenom }} {{ reclamation.user.nom }}</p>
+                                    <p><strong><i class="bi bi-envelope"></i> Email :</strong>
+                                        {{ reclamation.user.email }}</p>
+                                    <p><strong><i class="bi bi-calendar"></i> Date création :</strong>
+                                        {{ reclamation.dateCreation|date('d/m/Y à H:i') }}</p>
+                                    {% if reclamation.dateReponse %}
+                                        <p><strong><i class="bi bi-calendar-check"></i> Date réponse :</strong>
+                                            {{ reclamation.dateReponse|date('d/m/Y à H:i') }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Message de la réclamation -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0"><i class="bi bi-chat-left-text"></i> Message de l'utilisateur</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light">
+                                <p class="mb-0">{{ reclamation.message|nl2br }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Réponse admin -->
+                    {% if reclamation.reponseAdmin %}
+                        <div class="card mb-4 border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0"><i class="bi bi-reply-fill"></i> Votre réponse</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-success">
+                                    <p class="mb-0">{{ reclamation.reponseAdmin|nl2br }}</p>
+                                </div>
+                                <a href="{{ path('admin_reclamation_repondre', {'id': reclamation.id}) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i> Modifier la réponse
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Cette réclamation n'a pas encore de réponse.</strong>
+                            <a href="{{ path('admin_reclamation_repondre', {'id': reclamation.id}) }}" class="btn btn-sm btn-warning ms-3">
+                                <i class="bi bi-reply"></i> Répondre maintenant
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

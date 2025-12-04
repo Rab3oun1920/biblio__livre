@@ -1,0 +1,204 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ livre.titre }} - BookCollection{% endblock %}
+
+{% block body %}
+<div class="row">
+    {# Colonne Image #}
+    <div class="col-md-4 mb-4">
+        {% if livre.imageCouverture %}
+            <img src="{{ asset('uploads/livres/' ~ livre.imageCouverture) }}" 
+                 alt="{{ livre.titre }}" 
+                 class="img-fluid rounded shadow">
+        {% else %}
+            <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+                <i class="bi bi-book fs-1"></i>
+            </div>
+        {% endif %}
+    </div>
+
+    {# Colonne Détails #}
+    <div class="col-md-8">
+        <h1>{{ livre.titre }}</h1>
+        <p class="text-muted fs-5">
+            <i class="bi bi-person"></i> 
+            {{ livre.auteur.prenom }} {{ livre.auteur.nom }}
+        </p>
+
+        {# Note moyenne #}
+        {% set moyenne = livre.moyenneNotes %}
+        {% if moyenne > 0 %}
+            <div class="mb-3">
+                {% for i in 1..5 %}
+                    {% if i <= moyenne %}
+                        <i class="bi bi-star-fill etoiles fs-5"></i>
+                    {% else %}
+                        <i class="bi bi-star etoiles fs-5"></i>
+                    {% endif %}
+                {% endfor %}
+                <span class="text-muted">({{ moyenne }}/5 - {{ livre.commentairesValides|length }} avis)</span>
+            </div>
+        {% endif %}
+
+        {# Informations #}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    {% if livre.isbn %}
+                        <div class="col-md-6 mb-2">
+                            <strong>ISBN :</strong> {{ livre.isbn }}
+                        </div>
+                    {% endif %}
+                    {% if livre.genre %}
+                        <div class="col-md-6 mb-2">
+                            <strong>Genre :</strong> <span class="badge bg-info">{{ livre.genre }}</span>
+                        </div>
+                    {% endif %}
+                    {% if livre.anneePublication %}
+                        <div class="col-md-6 mb-2">
+                            <strong>Année :</strong> {{ livre.anneePublication }}
+                        </div>
+                    {% endif %}
+                    {% if livre.nombrePages %}
+                        <div class="col-md-6 mb-2">
+                            <strong>Pages :</strong> {{ livre.nombrePages }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Prix et Achat #}
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="fs-2 text-primary fw-bold mb-2">{{ livre.prix }} TND</p>
+                        {% if livre.stock > 0 %}
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle"></i> En stock ({{ livre.stock }})
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger">
+                                <i class="bi bi-x-circle"></i> Rupture de stock
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        {% if app.user and livre.stock > 0 %}
+                            <a href="{{ path('app_panier_ajouter', {id: livre.id}) }}" class="btn btn-primary btn-lg w-100">
+                                <i class="bi bi-cart-plus"></i> Ajouter au panier
+                            </a>
+                        {% elseif not app.user %}
+                            <a href="{{ path('app_login') }}" class="btn btn-secondary btn-lg w-100">
+                                <i class="bi bi-lock"></i> Connectez-vous
+                            </a>
+                        {% else %}
+                            <button class="btn btn-secondary btn-lg w-100" disabled>
+                                Indisponible
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Description #}
+        {% if livre.description %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-file-text"></i> Description</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ livre.description }}</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{# Commentaires #}
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h3><i class="bi bi-chat-dots"></i> Avis des lecteurs</h3>
+        <hr>
+
+        {% if app.user %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>Laisser un avis</h5>
+                    <a href="{{ path('app_commentaire_ajouter', {id: livre.id}) }}" class="btn btn-primary">
+                        <i class="bi bi-pencil"></i> Écrire un commentaire
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if livre.commentairesValides is not empty %}
+            {% for commentaire in livre.commentairesValides %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h6>{{ commentaire.user.prenom }} {{ commentaire.user.nom }}</h6>
+                            <small class="text-muted">{{ commentaire.dateCreation|date('d/m/Y') }}</small>
+                        </div>
+                        
+                        {% if commentaire.note %}
+                            <div class="mb-2">
+                                {% for i in 1..5 %}
+                                    {% if i <= commentaire.note %}
+                                        <i class="bi bi-star-fill etoiles"></i>
+                                    {% else %}
+                                        <i class="bi bi-star etoiles"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <p class="mb-0">{{ commentaire.contenu }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Aucun avis pour ce livre. Soyez le premier à donner votre avis !
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{# Livres du même auteur #}
+{% if livresMemeAuteur is defined and livresMemeAuteur is not empty %}
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3><i class="bi bi-collection"></i> Autres livres de {{ livre.auteur.prenom }} {{ livre.auteur.nom }}</h3>
+            <hr>
+        </div>
+        {% for autreLivre in livresMemeAuteur %}
+            <div class="col-md-3 mb-3">
+                <div class="card h-100">
+                    {% if autreLivre.imageCouverture %}
+                        <img src="{{ asset('uploads/livres/' ~ autreLivre.imageCouverture) }}" 
+                             class="card-img-top" 
+                             style="height: 200px; object-fit: cover;"
+                             alt="{{ autreLivre.titre }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h6>{{ autreLivre.titre }}</h6>
+                        <p class="text-primary fw-bold">{{ autreLivre.prix }} TND</p>
+                        <a href="{{ path('app_catalogue_show', {id: autreLivre.id}) }}" class="btn btn-sm btn-outline-primary w-100">
+                            Voir
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="mt-4">
+    <a href="{{ path('app_catalogue') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour au catalogue
+    </a>
+</div>
+{% endblock %}

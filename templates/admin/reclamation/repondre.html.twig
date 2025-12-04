@@ -1,0 +1,77 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Répondre à la réclamation{% endblock %}
+
+{% block page_title %}Répondre à la réclamation #{{ reclamation.id }}{% endblock %}
+
+{% block toolbar %}
+    <a href="{{ path('admin_reclamation_index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour à la liste
+    </a>
+    <a href="{{ path('admin_reclamation_show', {'id': reclamation.id}) }}" class="btn btn-info">
+        <i class="bi bi-eye"></i> Voir détails
+    </a>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-reply"></i> Répondre à la réclamation</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Message original -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Message original de {{ reclamation.user.prenom }} {{ reclamation.user.nom }}</h6>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Sujet :</strong> {{ reclamation.sujet }}</p>
+                            <div class="alert alert-light">
+                                <p class="mb-0">{{ reclamation.message|nl2br }}</p>
+                            </div>
+                            <small class="text-muted">
+                                <i class="bi bi-calendar"></i> {{ reclamation.dateCreation|date('d/m/Y à H:i') }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Formulaire de réponse -->
+                    <form method="post">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Votre réponse</label>
+                            <textarea name="reponse" class="form-control" rows="6" required
+                                      placeholder="Écrivez votre réponse à l'utilisateur...">
+                            {{ reclamation.reponseAdmin ? reclamation.reponseAdmin : '' }}
+                        </textarea>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Votre réponse sera envoyée à l'utilisateur.
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-lightbulb"></i>
+                            <strong>Conseils :</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Soyez courtois et professionnel</li>
+                                <li>Résolvez le problème clairement</li>
+                                <li>Proposez des solutions concrètes</li>
+                                <li>Signez avec votre nom/prénom</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{{ path('admin_reclamation_show', {'id': reclamation.id}) }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-send"></i> Envoyer la réponse
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

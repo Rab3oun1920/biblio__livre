@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Validation de commande - BookCollection{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="mb-4"><i class="bi bi-check-circle"></i> Validation de commande</h1>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Récapitulatif de votre commande</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for item in panier %}
+                            <div class="row align-items-center mb-4 border-bottom pb-4">
+                                <div class="col-md-2">
+                                    {% if item.livre.imageCouverture %}
+                                        <img src="{{ asset('uploads/livres/' ~ item.livre.imageCouverture) }}"
+                                             class="img-fluid rounded"
+                                             alt="{{ item.livre.titre }}">
+                                    {% else %}
+                                        <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 80px; height: 100px;">
+                                            <i class="bi bi-book text-white fs-1"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-5">
+                                    <h5 class="mb-1">{{ item.livre.titre }}</h5>
+                                    <p class="text-muted mb-1">
+                                        <i class="bi bi-person"></i>
+                                        {{ item.livre.auteur.prenom }} {{ item.livre.auteur.nom }}
+                                    </p>
+                                </div>
+                                <div class="col-md-2">
+                                    <strong>Quantité : {{ item.quantite }}</strong>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <h5 class="mb-0">{{ item.sousTotal|number_format(2, ',', ' ') }} TND</h5>
+                                    <small class="text-muted">{{ item.livre.prix|number_format(2, ',', ' ') }} TND x {{ item.quantite }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-receipt"></i> Total de la commande</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Total articles</span>
+                            <span>{{ total|number_format(2, ',', ' ') }} TND</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Livraison</span>
+                            <span class="text-success">Gratuite</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-4">
+                            <strong>Total à payer</strong>
+                            <strong class="fs-4 text-primary">{{ total|number_format(2, ',', ' ') }} TND</strong>
+                        </div>
+
+                        <form method="post" action="{{ path('app_commande_valider') }}">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Adresse de livraison</strong></label>
+                                <textarea class="form-control" name="adresse_livraison" rows="3" required>
+{{ app.user.adresse ? app.user.adresse : '' }}
+                            </textarea>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle"></i> Vous pouvez modifier votre adresse dans votre profil.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Mode de paiement</strong></label>
+                                <select class="form-select" name="mode_paiement" required>
+                                    <option value="especes">Paiement à la livraison (Espèces)</option>
+                                    <option value="carte_credit">Carte de crédit</option>
+                                    <option value="virement">Virement bancaire</option>
+                                </select>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Conditions générales</strong><br>
+                                <small>
+                                    • Livraison sous 3-5 jours ouvrés<br>
+                                    • Droit de rétractation de 14 jours<br>
+                                    • Paiement sécurisé
+                                </small>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-check-circle"></i> Confirmer et payer
+                                </button>
+                                <a href="{{ path('app_panier_index') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Retour au panier
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

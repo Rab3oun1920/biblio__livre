@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BookCollection{% endblock %}</title>
+
+    {# Bootstrap 5.3 CSS #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    {# Bootstrap Icons #}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .card-livre {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card-livre:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+        }
+
+        .livre-image {
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .etoiles {
+            color: #ffc107;
+        }
+
+        footer {
+            margin-top: auto;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+    </style>
+
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+{# Navbar #}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('app_catalogue') }}">
+            <i class="bi bi-book"></i> BookCollection
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_catalogue') }}">
+                        <i class="bi bi-grid-3x3-gap"></i> Catalogue
+                    </a>
+                </li>
+
+                {% if app.user %}
+                    {# Panier - seulement si la route existe #}
+                    {% if route_exists('app_panier') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_panier') }}">
+                                <i class="bi bi-cart3"></i> Panier
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {# Mes commandes - seulement si la route existe #}
+                    {% if route_exists('app_mes_commandes') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_mes_commandes') }}">
+                                <i class="bi bi-box-seam"></i> Mes commandes
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {# Réclamations - seulement si la route existe #}
+                    {% if route_exists('app_mes_reclamations') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_mes_reclamations') }}">
+                                <i class="bi bi-chat-left-text"></i> Réclamations
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+
+            <ul class="navbar-nav">
+                {% if app.user %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                            {% if app.user.prenom is defined and app.user.prenom %}
+                                {{ app.user.prenom }}
+                            {% else %}
+                                {{ app.user.email }}
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {# Mon Profil - seulement si la route existe #}
+                            {% if route_exists('app_profil') %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('app_profil') }}">
+                                        <i class="bi bi-person"></i> Mon Profil
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {# Administration - seulement si ROLE_ADMIN et route existe #}
+                            {% if is_granted('ROLE_ADMIN') and route_exists('admin_dashboard') %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('admin_dashboard') }}">
+                                        <i class="bi bi-speedometer2"></i> Administration
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('app_logout') }}">
+                                    <i class="bi bi-box-arrow-right"></i> Déconnexion
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    {# Ces routes doivent exister (générées par SecurityBundle) #}
+                    {% if route_exists('app_login') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_login') }}">
+                                <i class="bi bi-box-arrow-in-right"></i> Connexion
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% if route_exists('app_register') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_register') }}">
+                                <i class="bi bi-person-plus"></i> Inscription
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{# Messages Flash #}
+<div class="container mt-3">
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+{# Contenu Principal #}
+<main class="container my-4">
+    {% block body %}{% endblock %}
+</main>
+
+{# Footer #}
+<footer class="bg-dark text-white mt-5 py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5><i class="bi bi-book"></i> BookCollection</h5>
+                <p class="text-muted">Votre librairie en ligne de confiance</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Liens rapides</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{{ path('app_catalogue') }}" class="text-white-50">Catalogue</a></li>
+                    {% if app.user and route_exists('app_mes_commandes') %}
+                        <li><a href="{{ path('app_mes_commandes') }}" class="text-white-50">Mes commandes</a></li>
+                    {% endif %}
+                    {% if app.user and route_exists('app_mes_reclamations') %}
+                        <li><a href="{{ path('app_mes_reclamations') }}" class="text-white-50">Support</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Suivez-nous</h5>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-white-50 fs-4"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-white-50 fs-4"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="text-white-50 fs-4"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr class="border-secondary">
+        <div class="text-center text-muted">
+            <p class="mb-0">&copy; 2024 BookCollection. Tous droits réservés.</p>
+        </div>
+    </div>
+</footer>
+
+{# Bootstrap 5.3 JS #}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+{% block javascripts %}{% endblock %}
+</body>
+</html>

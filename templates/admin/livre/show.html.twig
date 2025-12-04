@@ -1,8 +1,8 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}{{ livre.titre }}{% endblock %}
+{% block title %}Détails du livre{% endblock %}
 
-{% block page_title %}Détails du livre{% endblock %}
+{% block page_title %}{{ livre.titre }}{% endblock %}
 
 {% block toolbar %}
     <a href="{{ path('admin_livre_index') }}" class="btn btn-secondary">
@@ -14,55 +14,138 @@
 {% endblock %}
 
 {% block body %}
-<div class="row">
-    <div class="col-md-8 mx-auto">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">{{ livre.titre }}</h5>
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <tbody>
-                        <tr>
-                            <th width="30%">ID</th>
-                            <td>{{ livre.id }}</td>
-                        </tr>
-                        <tr>
-                            <th>Titre</th>
-                            <td>{{ livre.titre }}</td>
-                        </tr>
-                        <tr>
-                            <th>Auteur</th>
-                            <td>
-                                <a href="{{ path('admin_auteur_show', {'id': livre.auteur.id}) }}">
-                                    {{ livre.auteur }}
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>ISBN</th>
-                            <td>{{ livre.isbn ?? '-' }}</td>
-                        </tr>
-                        <tr>
-                            <th>Genre</th>
-                            <td>{{ livre.genre ?? '-' }}</td>
-                        </tr>
-                        <tr>
-                            <th>Année de publication</th>
-                            <td>{{ livre.anneePublication ?? '-' }}</td>
-                        </tr>
-                        <tr>
-                            <th>Nombre de pages</th>
-                            <td>{{ livre.nombrePages ?? '-' }}</td>
-                        </tr>
-                        <tr>
-                            <th>Description</th>
-                            <td>{{ livre.description ?? '-' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        {% if livre.imageCouverture %}
+                            <div class="col-md-4 text-center mb-4">
+                                <img src="{{ asset('uploads/livres/' ~ livre.imageCouverture) }}"
+                                     alt="{{ livre.titre }}"
+                                     class="img-fluid img-thumbnail shadow"
+                                     style="max-height: 400px;">
+                            </div>
+                        {% endif %}
+
+                        <div class="col-md-{{ livre.imageCouverture ? '8' : '12' }}">
+                            <table class="table table-borderless">
+                                <tbody>
+                                <tr>
+                                    <th style="width: 200px;">Titre</th>
+                                    <td><strong>{{ livre.titre }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <th>Auteur</th>
+                                    <td>
+                                        <a href="{{ path('admin_auteur_show', {'id': livre.auteur.id}) }}"
+                                           class="text-decoration-none">
+                                            {{ livre.auteur.prenom }} {{ livre.auteur.nom }}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>ISBN</th>
+                                    <td>{{ livre.isbn ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Genre</th>
+                                    <td>
+                                        {% if livre.genre %}
+                                            <span class="badge bg-info">{{ livre.genre }}</span>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Prix</th>
+                                    <td>
+                                    <span class="badge bg-success fs-6">
+                                        {{ livre.prix|number_format(2, ',', ' ') }} TND
+                                    </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Stock</th>
+                                    <td>
+                                        {% if livre.stock > 0 %}
+                                            <span class="badge bg-primary">{{ livre.stock }} copies</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Rupture de stock</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Disponibilité</th>
+                                    <td>
+                                        {% if livre.estDisponible %}
+                                            <span class="badge bg-success">Disponible</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Indisponible</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Année de publication</th>
+                                    <td>{{ livre.anneePublication ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Nombre de pages</th>
+                                    <td>{{ livre.nombrePages ?? '-' }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            {% if livre.description %}
+                                <div class="mt-4">
+                                    <h5 class="border-bottom pb-2">Description</h5>
+                                    <p class="text-justify">{{ livre.description }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-between">
+                        <a href="{{ path('admin_livre_index') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Retour
+                        </a>
+                        <div>
+                            <a href="{{ path('admin_livre_edit', {'id': livre.id}) }}" class="btn btn-warning">
+                                <i class="bi bi-pencil"></i> Modifier
+                            </a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="bi bi-trash"></i> Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmer la suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer le livre "{{ livre.titre }}" ?
+                    {% if livre.imageCouverture %}
+                        <br><small class="text-muted">L'image de couverture sera également supprimée.</small>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form method="post" action="{{ path('admin_livre_delete', {'id': livre.id}) }}" style="display: inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ livre.id) }}">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

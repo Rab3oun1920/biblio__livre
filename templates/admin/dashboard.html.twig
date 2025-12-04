@@ -5,74 +5,90 @@
 {% block page_title %}Tableau de bord{% endblock %}
 
 {% block body %}
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card stat-card users">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-2">Utilisateurs</h6>
-                        <h2 class="mb-0">{{ stats.totalUsers }}</h2>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card users">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Utilisateurs</h6>
+                            <h2 class="mb-0">{{ stats.totalUsers }}</h2>
+                        </div>
+                        <div class="text-primary" style="font-size: 3rem;">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
                     </div>
-                    <div class="text-primary" style="font-size: 3rem;">
-                        <i class="bi bi-people-fill"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card stat-card books">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Livres</h6>
+                            <h2 class="mb-0">{{ stats.totalLivres }}</h2>
+                        </div>
+                        <div class="text-success" style="font-size: 3rem;">
+                            <i class="bi bi-book-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card stat-card authors">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Auteurs</h6>
+                            <h2 class="mb-0">{{ stats.totalAuteurs }}</h2>
+                        </div>
+                        <div class="text-warning" style="font-size: 3rem;">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card stat-card orders">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Commandes</h6>
+                            <h2 class="mb-0">{{ stats.totalCommandes }}</h2>
+                        </div>
+                        <div class="text-info" style="font-size: 3rem;">
+                            <i class="bi bi-cart-fill"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card stat-card books">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-2">Livres</h6>
-                        <h2 class="mb-0">{{ stats.totalLivres }}</h2>
-                    </div>
-                    <div class="text-success" style="font-size: 3rem;">
-                        <i class="bi bi-book-fill"></i>
-                    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Derniers utilisateurs</h5>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card stat-card authors">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-2">Auteurs</h6>
-                        <h2 class="mb-0">{{ stats.totalAuteurs }}</h2>
-                    </div>
-                    <div class="text-warning" style="font-size: 3rem;">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Derniers utilisateurs</h5>
-            </div>
-            <div class="card-body">
-                {% if stats.recentUsers is not empty %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                <div class="card-body">
+                    {% if stats.recentUsers is not empty %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
                                 <tr>
                                     <th>Nom</th>
                                     <th>Email</th>
                                     <th>Rôle</th>
                                 </tr>
-                            </thead>
-                            <tbody>
+                                </thead>
+                                <tbody>
                                 {% for user in stats.recentUsers %}
                                     <tr>
                                         <td>{{ user.prenom }} {{ user.nom }}</td>
@@ -86,48 +102,119 @@
                                         </td>
                                     </tr>
                                 {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <p class="text-muted">Aucun utilisateur pour le moment.</p>
-                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucun utilisateur pour le moment.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Livres en faible stock</h5>
+                </div>
+                <div class="card-body">
+                    {% if stats.livresFaibleStock is not empty %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Stock</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for livre in stats.livresFaibleStock %}
+                                    <tr>
+                                        <td>{{ livre.titre }}</td>
+                                        <td>
+                                            <span class="badge bg-warning">{{ livre.stock }}</span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('admin_livre_edit', {'id': livre.id}) }}"
+                                               class="btn btn-sm btn-outline-warning">
+                                                <i class="bi bi-plus-circle"></i> Réapprovisionner
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucun livre en faible stock.</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0"><i class="bi bi-book"></i> Derniers livres ajoutés</h5>
-            </div>
-            <div class="card-body">
-                {% if stats.recentLivres is not empty %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-book"></i> Derniers livres ajoutés</h5>
+                </div>
+                <div class="card-body">
+                    {% if stats.recentLivres is not empty %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
                                 <tr>
                                     <th>Titre</th>
                                     <th>Auteur</th>
-                                    <th>Année</th>
+                                    <th>Prix</th>
+                                    <th>Stock</th>
                                 </tr>
-                            </thead>
-                            <tbody>
+                                </thead>
+                                <tbody>
                                 {% for livre in stats.recentLivres %}
                                     <tr>
                                         <td>{{ livre.titre }}</td>
                                         <td>{{ livre.auteur }}</td>
-                                        <td>{{ livre.anneePublication ?? '-' }}</td>
+                                        <td>{{ livre.prix|number_format(2, ',', ' ') }} TND</td>
+                                        <td>
+                                            {% if livre.stock > 0 %}
+                                                <span class="badge bg-primary">{{ livre.stock }}</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">0</span>
+                                            {% endif %}
+                                        </td>
                                     </tr>
                                 {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <p class="text-muted">Aucun livre pour le moment.</p>
-                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucun livre pour le moment.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-chat-left-text"></i> Réclamations en attente
+                        {% if stats.reclamationsEnAttente > 0 %}
+                            <span class="badge bg-light text-danger">{{ stats.reclamationsEnAttente }}</span>
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if stats.reclamationsEnAttente > 0 %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>{{ stats.reclamationsEnAttente }} réclamation(s) en attente de réponse.</strong>
+                            <br>
+                            <a href="{{ path('admin_reclamation_index') }}" class="btn btn-sm btn-warning mt-2">                                <i class="bi bi-arrow-right"></i> Voir les réclamations
+                            </a>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucune réclamation en attente.</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

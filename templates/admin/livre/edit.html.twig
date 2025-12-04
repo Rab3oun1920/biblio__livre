@@ -11,48 +11,65 @@
 {% endblock %}
 
 {% block body %}
-<div class="row">
-    <div class="col-md-8 mx-auto">
-        <div class="card">
-            <div class="card-body">
-                {{ form_start(form) }}
-                    <div class="mb-3">
-                        {{ form_label(form.titre) }}
-                        {{ form_widget(form.titre) }}
-                        {{ form_errors(form.titre) }}
-                    </div>
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
 
-                    <div class="mb-3">
-                        {{ form_label(form.auteur) }}
-                        {{ form_widget(form.auteur) }}
-                        {{ form_errors(form.auteur) }}
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                {{ form_label(form.titre) }}
+                                {{ form_widget(form.titre) }}
+                                {{ form_errors(form.titre) }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                {{ form_label(form.auteur) }}
+                                {{ form_widget(form.auteur) }}
+                                {{ form_errors(form.auteur) }}
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             {{ form_label(form.isbn) }}
                             {{ form_widget(form.isbn) }}
                             {{ form_errors(form.isbn) }}
                         </div>
-
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             {{ form_label(form.genre) }}
                             {{ form_widget(form.genre) }}
                             {{ form_errors(form.genre) }}
                         </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             {{ form_label(form.anneePublication) }}
                             {{ form_widget(form.anneePublication) }}
                             {{ form_errors(form.anneePublication) }}
                         </div>
+                    </div>
 
-                        <div class="col-md-6 mb-3">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
                             {{ form_label(form.nombrePages) }}
                             {{ form_widget(form.nombrePages) }}
                             {{ form_errors(form.nombrePages) }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ form_label(form.prix) }}
+                            <div class="input-group">
+                                {{ form_widget(form.prix) }}
+                                <span class="input-group-text">TND</span>
+                            </div>
+                            {{ form_errors(form.prix) }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ form_label(form.stock) }}
+                            {{ form_widget(form.stock) }}
+                            {{ form_errors(form.stock) }}
                         </div>
                     </div>
 
@@ -62,15 +79,39 @@
                         {{ form_errors(form.description) }}
                     </div>
 
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <div class="mb-3">
+                        {{ form_label(form.imageCouverture, 'Image de couverture') }}
+
+                        {% if livre.imageCouverture %}
+                            <div class="mb-2 p-3 border rounded bg-light">
+                                <p class="mb-2"><strong>Image actuelle :</strong></p>
+                                <img src="{{ asset('uploads/livres/' ~ livre.imageCouverture) }}"
+                                     alt="{{ livre.titre }}"
+                                     class="img-thumbnail shadow-sm"
+                                     style="max-width: 200px; max-height: 300px;">
+                                <p class="text-muted mt-2 mb-0">
+                                    <i class="bi bi-info-circle"></i> Télécharger une nouvelle image pour remplacer celle-ci
+                                </p>
+                            </div>
+                        {% endif %}
+
+                        {{ form_widget(form.imageCouverture) }}
+                        {{ form_errors(form.imageCouverture) }}
+                        <div class="form-text">
+                            <i class="bi bi-info-circle"></i> Formats acceptés : JPG, PNG, GIF (max 2 Mo)
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <a href="{{ path('admin_livre_index') }}" class="btn btn-secondary">Annuler</a>
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-save"></i> Enregistrer les modifications
                         </button>
                     </div>
-                {{ form_end(form) }}
+
+                    {{ form_end(form) }}
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
