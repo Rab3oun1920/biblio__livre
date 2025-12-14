@@ -1,20 +1,178 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/base.html.twig' %}
 
-{% block title %}Hello Admin/CommentaireAdminController!{% endblock %}
+{% block title %}Modération des commentaires{% endblock %}
+
+{% block page_title %}Modération des commentaires{% endblock %}
+
+{% block toolbar %}
+    <div class="btn-group">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="bi bi-filter"></i> Filtrer par statut
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ path('admin_commentaire_index') }}">Tous</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ path('admin_commentaire_index') }}?statut=valide">
+                    <i class="bi bi-check-circle text-success"></i> Validés
+                </a></li>
+            <li><a class="dropdown-item" href="{{ path('admin_commentaire_index') }}?statut=en_attente">
+                    <i class="bi bi-clock text-warning"></i> En attente
+                </a></li>
+        </ul>
+    </div>
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="card">
+        <div class="card-body">
+            {% if commentaires is empty %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Aucun commentaire pour le moment.
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Auteur</th>
+                            <th>Livre</th>
+                            <th>Commentaire</th>
+                            <th>Note</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for commentaire in commentaires %}
+                            <tr class="{{ not commentaire.estValide ? 'table-warning' : '' }}">
+                                <td>
+                                    <strong>{{ commentaire.user.prenom }} {{ commentaire.user.nom }}</strong>
+                                    <br><small class="text-muted">{{ commentaire.user.email }}</small>
+                                    {% if not commentaire.user.canComment %}
+                                        <br><span class="badge bg-warning text-dark">
+                                            <i class="bi bi-person-x"></i> Bloqué
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small>{{ commentaire.livre.titre }}</small>
+                                </td>
+                                <td>
+                                    <small>
+                                        {{ commentaire.contenu|length > 80 ? commentaire.contenu|slice(0, 80) ~ '...' : commentaire.contenu }}
+                                    </small>
+                                </td>
+                                <td>
+                                    {% if commentaire.note %}
+                                        {% for i in 1..commentaire.note %}⭐{% endfor %}
+                                    {% else %}
+                                        <em class="text-muted">-</em>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small>{{ commentaire.dateCreation|date('d/m/Y H:i') }}</small>
+                                </td>
+                                <td>
+                                    {% if commentaire.estValide %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle"></i> Validé
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-clock"></i> En attente
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        {# Valider/Invalider #}
+                                        {% if commentaire.estValide %}
+                                            <form method="post"
+                                                  action="{{ path('admin_commentaire_desactiver', {id: commentaire.id}) }}"
+                                                  style="display:inline;">
+                                                <input type="hidden" name="_token"
+                                                       value="{{ csrf_token('desactiver' ~ commentaire.id) }}">
+                                                <button type="submit" class="btn btn-warning" title="Invalider">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <form method="post"
+                                                  action="{{ path('admin_commentaire_reactiver', {id: commentaire.id}) }}"
+                                                  style="display:inline;">
+                                                <input type="hidden" name="_token"
+                                                       value="{{ csrf_token('reactiver' ~ commentaire.id) }}">
+                                                <button type="submit" class="btn btn-success" title="Valider">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+                                        {# Supprimer #}
+                                        <form method="post"
+                                              action="{{ path('admin_commentaire_supprimer', {id: commentaire.id}) }}"
+                                              style="display:inline;"
+                                              onsubmit="return confirm('Supprimer définitivement ce commentaire ?')">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('supprimer' ~ commentaire.id) }}">
+                                            <button type="submit" class="btn btn-danger" title="Supprimer">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/xampp/htdocs/biblio_livres/src/Controller/Admin/CommentaireAdminController.php</code></li>
-        <li>Your template at <code>C:/xampp/htdocs/biblio_livres/templates/admin/commentaire_admin/index.html.twig</code></li>
-    </ul>
-</div>
+                                        {# Bloquer/Débloquer utilisateur #}
+                                        {% if commentaire.user.canComment %}
+                                            <form method="post"
+                                                  action="{{ path('admin_user_bloquer_commentaires', {id: commentaire.user.id}) }}"
+                                                  style="display:inline;"
+                                                  onsubmit="return confirm('Bloquer cet utilisateur ? Il ne pourra plus commenter.')">
+                                                <input type="hidden" name="_token"
+                                                       value="{{ csrf_token('bloquer' ~ commentaire.user.id) }}">
+                                                <button type="submit" class="btn btn-warning" title="Bloquer utilisateur">
+                                                    <i class="bi bi-person-x"></i>
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <form method="post"
+                                                  action="{{ path('admin_user_debloquer_commentaires', {id: commentaire.user.id}) }}"
+                                                  style="display:inline;">
+                                                <input type="hidden" name="_token"
+                                                       value="{{ csrf_token('debloquer' ~ commentaire.user.id) }}">
+                                                <button type="submit" class="btn btn-info" title="Débloquer utilisateur">
+                                                    <i class="bi bi-person-check"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Légende #}
+    <div class="card mt-3">
+        <div class="card-body">
+            <h6><i class="bi bi-info-circle"></i> Légende des actions :</h6>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="small mb-0">
+                        <li><strong><i class="bi bi-check-lg text-success"></i> Valider :</strong> Rendre le commentaire visible publiquement</li>
+                        <li><strong><i class="bi bi-x-circle text-warning"></i> Invalider :</strong> Masquer le commentaire (en attente)</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="small mb-0">
+                        <li><strong><i class="bi bi-trash text-danger"></i> Supprimer :</strong> Suppression définitive (irréversible)</li>
+                        <li><strong><i class="bi bi-person-x text-warning"></i> Bloquer :</strong> Empêcher l'utilisateur de commenter</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

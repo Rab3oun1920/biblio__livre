@@ -60,7 +60,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     {% if commande.statut in ['validee', 'livree'] %}
                         <div class="mb-3">
                             <div class="d-flex align-items-center">
@@ -80,7 +80,7 @@
                             </div>
                         </div>
                     {% endif %}
-                    
+
                     {% if commande.statut == 'livree' %}
                         <div class="mb-3">
                             <div class="d-flex align-items-center">
@@ -124,11 +124,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for ligne in commande.lignesCommande %}
-                                <tr>
+                        {% for ligne in commande.ligneCommandes %}                                <tr>
                                     <td>
                                         {% if ligne.livre.imageCouverture %}
-                                            <img src="{{ asset('uploads/livres/' ~ ligne.livre.imageCouverture) }}" 
+                                            <img src="{{ asset('uploads/livres/' ~ ligne.livre.imageCouverture) }}"
                                                  alt="{{ ligne.livre.titre }}"
                                                  style="width: 50px; height: 70px; object-fit: cover;"
                                                  class="rounded">
@@ -161,23 +160,23 @@
 
         {# Actions #}
         <div class="mt-4">
-            <a href="{{ path('app_commande_index') }}" class="btn btn-secondary">
+            <a href="{{ path('app_mes_commandes') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i> Retour à mes commandes
             </a>
-            
+
             {% if commande.statut == 'en_attente' %}
                 <div class="alert alert-info mt-3">
-                    <i class="bi bi-info-circle"></i> 
+                    <i class="bi bi-info-circle"></i>
                     Votre commande est en attente de validation. Vous recevrez un email de confirmation dès qu'elle sera traitée.
                 </div>
             {% elseif commande.statut == 'validee' %}
                 <div class="alert alert-success mt-3">
-                    <i class="bi bi-check-circle"></i> 
+                    <i class="bi bi-check-circle"></i>
                     Votre commande a été validée ! Elle sera livrée sous 3 à 5 jours ouvrés.
                 </div>
             {% elseif commande.statut == 'livree' %}
                 <div class="alert alert-success mt-3">
-                    <i class="bi bi-box-seam"></i> 
+                    <i class="bi bi-box-seam"></i>
                     Votre commande a été livrée ! Merci pour votre achat.
                 </div>
             {% endif %}

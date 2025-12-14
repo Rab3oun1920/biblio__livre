@@ -24,24 +24,28 @@
                                 <div>
                                     {% if commande.statut == 'en_attente' %}
                                         <span class="badge bg-warning text-dark">
-                                        <i class="bi bi-clock"></i> En attente
-                                    </span>
+                                            <i class="bi bi-clock"></i> En attente
+                                        </span>
                                     {% elseif commande.statut == 'validee' %}
                                         <span class="badge bg-success">
-                                        <i class="bi bi-check-circle"></i> Validée
-                                    </span>
+                                            <i class="bi bi-check-circle"></i> Validée
+                                        </span>
+                                    {% elseif commande.statut == 'rejetee' %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle"></i> Rejetée
+                                        </span>
                                     {% elseif commande.statut == 'expediee' %}
                                         <span class="badge bg-info">
-                                        <i class="bi bi-truck"></i> Expédiée
-                                    </span>
+                                            <i class="bi bi-truck"></i> Expédiée
+                                        </span>
                                     {% elseif commande.statut == 'livree' %}
                                         <span class="badge bg-primary">
-                                        <i class="bi bi-house-check"></i> Livrée
-                                    </span>
+                                            <i class="bi bi-house-check"></i> Livrée
+                                        </span>
                                     {% elseif commande.statut == 'annulee' %}
                                         <span class="badge bg-danger">
-                                        <i class="bi bi-x-circle"></i> Annulée
-                                    </span>
+                                            <i class="bi bi-x-circle"></i> Annulée
+                                        </span>
                                     {% endif %}
                                 </div>
                             </div>
@@ -68,6 +72,34 @@
                                         </a>
                                     </div>
                                 </div>
+
+                                {# ⭐ NOUVEAU : Affichage des notes admin #}
+                                {% if commande.statut == 'validee' and commande.validatedAt %}
+                                    <div class="alert alert-success mt-3 mb-0">
+                                        <strong><i class="bi bi-check-circle"></i> Validée le {{ commande.validatedAt|date('d/m/Y à H:i') }}</strong>
+                                        {% if commande.validatedBy %}
+                                            <small>par {{ commande.validatedBy.prenom }} {{ commande.validatedBy.nom }}</small>
+                                        {% endif %}
+                                        {% if commande.adminNote %}
+                                            <div class="mt-2">
+                                                <strong>Note :</strong> {{ commande.adminNote }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% elseif commande.statut == 'rejetee' and commande.rejectedAt %}
+                                    <div class="alert alert-danger mt-3 mb-0">
+                                        <strong><i class="bi bi-x-circle"></i> Rejetée le {{ commande.rejectedAt|date('d/m/Y à H:i') }}</strong>
+                                        {% if commande.adminNote %}
+                                            <div class="mt-2">
+                                                <strong>Raison :</strong> {{ commande.adminNote }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% elseif commande.statut == 'en_attente' %}
+                                    <div class="alert alert-info mt-3 mb-0">
+                                        <i class="bi bi-hourglass-split"></i> Votre commande est en cours de traitement par nos équipes.
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

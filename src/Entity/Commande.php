@@ -30,6 +30,20 @@ class Commande
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $montantTotal = null;
 
+    // ⭐ NOUVEAUX CHAMPS pour validation/rejet admin
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $adminNote = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $validatedAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $rejectedAt = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $validatedBy = null;
+
     #[ORM\OneToMany(targetEntity: LigneCommande::class, mappedBy: 'commande', orphanRemoval: true)]
     private Collection $ligneCommandes;
 
@@ -85,6 +99,51 @@ class Commande
     public function setMontantTotal(string $montantTotal): static
     {
         $this->montantTotal = $montantTotal;
+        return $this;
+    }
+
+    // ⭐ NOUVEAUX Getters/Setters pour validation/rejet
+    public function getAdminNote(): ?string
+    {
+        return $this->adminNote;
+    }
+
+    public function setAdminNote(?string $adminNote): static
+    {
+        $this->adminNote = $adminNote;
+        return $this;
+    }
+
+    public function getValidatedAt(): ?\DateTimeInterface
+    {
+        return $this->validatedAt;
+    }
+
+    public function setValidatedAt(?\DateTimeInterface $validatedAt): static
+    {
+        $this->validatedAt = $validatedAt;
+        return $this;
+    }
+
+    public function getRejectedAt(): ?\DateTimeInterface
+    {
+        return $this->rejectedAt;
+    }
+
+    public function setRejectedAt(?\DateTimeInterface $rejectedAt): static
+    {
+        $this->rejectedAt = $rejectedAt;
+        return $this;
+    }
+
+    public function getValidatedBy(): ?User
+    {
+        return $this->validatedBy;
+    }
+
+    public function setValidatedBy(?User $validatedBy): static
+    {
+        $this->validatedBy = $validatedBy;
         return $this;
     }
 

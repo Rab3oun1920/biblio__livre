@@ -35,14 +35,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $prenom = null;
 
-    // 🆕 NOUVEAUX CHAMPS
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $telephone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $adresse = null;
 
-    // 🆕 NOUVELLES RELATIONS
+    // ⭐ NOUVEAU : Autorisation de commenter
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $canComment = true;
+
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $commandes;
 
@@ -58,6 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->commentaires = new ArrayCollection();
         $this->reclamations = new ArrayCollection();
         $this->roles = ['ROLE_USER'];
+        $this->canComment = true; // Par défaut, peut commenter
     }
 
     public function getId(): ?int
@@ -151,6 +154,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAdresse(?string $adresse): static
     {
         $this->adresse = $adresse;
+        return $this;
+    }
+
+    // ⭐ NOUVEAU : Getters/Setters pour canComment
+    public function isCanComment(): bool
+    {
+        return $this->canComment;
+    }
+
+    public function setCanComment(bool $canComment): static
+    {
+        $this->canComment = $canComment;
         return $this;
     }
 

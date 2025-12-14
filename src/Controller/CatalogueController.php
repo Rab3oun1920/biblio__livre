@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CatalogueController extends AbstractController
 {
-    #[Route('/', name: 'app_home')]
+    // ⚠️ MODIFIÉ : Suppression de la route '/' - garde uniquement '/catalogue'
     #[Route('/catalogue', name: 'app_catalogue')]
     public function index(
         Request $request,

@@ -13,7 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsCommand(
     name: 'app:create-admin',
-    description: 'Créer l\'utilisateur administrateur par défaut',
+    description: 'Créer ou mettre à jour l\'utilisateur administrateur',
 )]
 class CreateAdminCommand extends Command
 {
@@ -29,20 +29,34 @@ class CreateAdminCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         // Vérifier si l'admin existe déjà
-        $existingAdmin = $this->entityManager->getRepository(User::class)
+        $admin = $this->entityManager->getRepository(User::class)
             ->findOneBy(['email' => 'admin@gmail.com']);
 
-        if ($existingAdmin) {
-            $io->warning('L\'utilisateur admin existe déjà!');
-            return Command::FAILURE;
+        if ($admin) {
+            // L'admin existe : mettre à jour ses rôles
+            $io->warning('L\'utilisateur admin existe déjà. Mise à jour des rôles...');
+
+            $roles = $admin->getRoles();
+            if (!in_array('ROLE_ADMIN', $roles)) {
+                $roles[] = 'ROLE_ADMIN';
+                $admin->setRoles($roles);
+                $this->entityManager->flush();
+
+                $io->success('✅ Rôle ADMIN ajouté avec succès!');
+                $io->info('Rôles actuels : ' . implode(', ', $admin->getRoles()));
+            } else {
+                $io->success('L\'utilisateur a déjà le rôle ADMIN');
+            }
+
+            return Command::SUCCESS;
         }
 
-        // Créer l'utilisateur admin
+        // Créer l'utilisateur admin s'il n'existe pas
         $admin = new User();
         $admin->setEmail('admin@gmail.com');
         $admin->setNom('Admin');
         $admin->setPrenom('Super');
-        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setRoles(['ROLE_USER', 'ROLE_ADMIN']);
 
         $hashedPassword = $this->passwordHasher->hashPassword($admin, 'admin123');
         $admin->setPassword($hashedPassword);

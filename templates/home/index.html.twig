@@ -1,0 +1,148 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue - Bibliothèque en Ligne{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <!-- Hero Section -->
+        <div class="text-center py-5">
+            <h1 class="display-3 fw-bold mb-4">📚 Bienvenue à la Bibliothèque</h1>
+            <p class="lead text-muted mb-5">
+                Découvrez notre collection de livres, passez vos commandes en ligne<br>
+                et partagez vos avis avec la communauté !
+            </p>
+
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="{{ path('app_catalogue') }}" class="btn btn-primary btn-lg px-5 py-3">
+                    🔍 Découvrir le catalogue
+                </a>
+                {% if not app.user %}
+                    <a href="{{ path('app_register') }}" class="btn btn-outline-success btn-lg px-5 py-3">
+                        ✨ S'inscrire
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Features Cards -->
+        <div class="row mt-5 g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <div class="display-4 mb-3">📖</div>
+                        <h5 class="card-title fw-bold">Large Collection</h5>
+                        <p class="card-text text-muted">
+                            Des milliers de livres disponibles dans tous les genres :
+                            romans, sciences, histoire, développement personnel...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <div class="display-4 mb-3">🚚</div>
+                        <h5 class="card-title fw-bold">Commande Facile</h5>
+                        <p class="card-text text-muted">
+                            Commandez en quelques clics avec validation rapide par nos équipes.
+                            Suivi en temps réel de vos commandes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <div class="display-4 mb-3">💬</div>
+                        <h5 class="card-title fw-bold">Avis Communautaires</h5>
+                        <p class="card-text text-muted">
+                            Lisez les avis des autres lecteurs et partagez vos propres
+                            commentaires sur vos livres préférés.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action for non-logged users -->
+        {% if not app.user %}
+            <div class="text-center mt-5 p-5 bg-light rounded-3">
+                <h3 class="mb-3">Pas encore membre ?</h3>
+                <p class="text-muted mb-4">
+                    Inscrivez-vous gratuitement pour profiter de toutes les fonctionnalités :
+                    commandes, commentaires, suivi personnalisé...
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{{ path('app_register') }}" class="btn btn-success btn-lg">
+                        📝 Créer un compte
+                    </a>
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-primary btn-lg">
+                        🔐 Se connecter
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <!-- Quick Stats for logged users -->
+            <div class="text-center mt-5 p-5 bg-primary bg-opacity-10 rounded-3">
+                <h3 class="mb-3">Bonjour {{ app.user.prenom }} ! 👋</h3>
+                <p class="text-muted mb-4">
+                    Prêt à découvrir de nouveaux livres ?
+                </p>
+                <a href="{{ path('app_catalogue') }}" class="btn btn-primary btn-lg">
+                    Parcourir le catalogue →
+                </a>
+            </div>
+        {% endif %}
+
+        <!-- How it Works Section -->
+        <div class="mt-5 pt-5">
+            <h3 class="text-center mb-5">Comment ça marche ?</h3>
+            <div class="row g-4">
+                <div class="col-md-3 text-center">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width: 60px; height: 60px; font-size: 24px;">
+                        1
+                    </div>
+                    <h5>Parcourez</h5>
+                    <p class="text-muted small">Explorez notre catalogue de livres</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width: 60px; height: 60px; font-size: 24px;">
+                        2
+                    </div>
+                    <h5>Sélectionnez</h5>
+                    <p class="text-muted small">Ajoutez vos livres au panier</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width: 60px; height: 60px; font-size: 24px;">
+                        3
+                    </div>
+                    <h5>Commandez</h5>
+                    <p class="text-muted small">Validez votre commande en ligne</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width: 60px; height: 60px; font-size: 24px;">
+                        ✓
+                    </div>
+                    <h5>Profitez</h5>
+                    <p class="text-muted small">Recevez et lisez vos livres</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+        }
+    </style>
+{% endblock %}
