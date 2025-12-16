@@ -54,10 +54,10 @@
                 <h5 class="mb-0"><i class="bi bi-link-45deg"></i> Liens rapides</h5>
             </div>
             <div class="list-group list-group-flush">
-                <a href="{{ path('app_commande_index') }}" class="list-group-item list-group-item-action">
+                <a href="{{ path('app_mes_commandes') }}" class="list-group-item list-group-item-action">
                     <i class="bi bi-box-seam"></i> Mes commandes
                 </a>
-                <a href="{{ path('app_reclamation_index') }}" class="list-group-item list-group-item-action">
+                <a href="{{ path('app_mes_reclamations') }}" class="list-group-item list-group-item-action">
                     <i class="bi bi-chat-left-text"></i> Mes réclamations
                 </a>
                 <a href="{{ path('app_catalogue') }}" class="list-group-item list-group-item-action">
@@ -166,7 +166,7 @@
                             </li>
                         {% endfor %}
                     </ul>
-                    <a href="{{ path('app_commande_index') }}" class="btn btn-sm btn-outline-primary">
+                    <a href="{{ path('app_mes_commandes') }}" class="btn btn-sm btn-outline-primary">
                         Voir toutes mes commandes <i class="bi bi-arrow-right"></i>
                     </a>
                 {% else %}
